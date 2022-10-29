@@ -7,7 +7,7 @@ class RocketLaunch
     /**
      *  Karman line as space beginning 100 kilometres above Earth
      */
-    const KARMAN_LINE = 100;
+    const ATMOSPHERE_DISTANCE = 100;
 
     /**
      * Empty Space Distance from Earth to Space Station in KM
@@ -74,7 +74,7 @@ class RocketLaunch
     public static function getUpTime($accleration, $linear_speed)
     {
         // Start journey time in atmosphere
-        $atmosphere_time = sqrt((2 * self::KARMAN_LINE) / $accleration); // t = sqrt(2s/a)
+        $atmosphere_time = sqrt((2 * self::ATMOSPHERE_DISTANCE) / $accleration); // t = sqrt(2s/a)
 
         // Start journey time in empty space
         $empty_space_time = self::BEGIN_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
