@@ -10,14 +10,14 @@ class RocketLaunch
     const KARMAN_LINE = 100;
 
     /**
-     * Empty Space Distance between Earth and Space Station in KM
+     * Empty Space Distance from Earth to Space Station in KM
      */
-    const EMPTY_SPACE_DISTANCE = 308;
+    const BEGIN_EMPTY_SPACE_DISTANCE = 308;
 
     /**
-     * Return Empty Space Distance between Space Station and Earth in KM
+     * Empty Space Distance from Space Station to Earth in KM
      */
-    const RETURN_EMPTY_SPACE_DISTANCE = 380;
+    const END_EMPTY_SPACE_DISTANCE = 380;
 
     /**
      * Space Station staying minutes
@@ -77,7 +77,7 @@ class RocketLaunch
         $atmosphere_time = sqrt((2 * self::KARMAN_LINE) / $accleration); // t = sqrt(2s/a)
 
         // Start journey time in empty space
-        $empty_space_time = self::EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
+        $empty_space_time = self::BEGIN_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
 
         // Total up time
         $up_time = ($atmosphere_time + $empty_space_time) / 60;
@@ -95,7 +95,7 @@ class RocketLaunch
     public static function getDownTime($linear_speed)
     {
         // Return journey time in empty space and atmosphere
-        $empty_space_time = self::RETURN_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
+        $empty_space_time = self::END_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
 
         // Return journey time in empty space and atmosphere
         $atmosphere_time = ($linear_speed * 1000) / 9.8; // t = u/g
