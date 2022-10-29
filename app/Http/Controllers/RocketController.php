@@ -36,12 +36,12 @@ class RocketController extends Controller
         // Update posted data if validation passes.
         if ($validation->passes()) {
             $launch_time = $this->ampm_to_sql_datetime($request->time);
-            $journey_hours = RocketLaunch::estimatedTimeToComeBack($launch_time, $request->rocket);
-            $estimate_time = \Carbon\Carbon::parse($launch_time)->addMinutes($journey_hours);
+            $journey_minutes = RocketLaunch::estimatedTimeToComeBack($launch_time, $request->rocket);
+            $estimate_time = \Carbon\Carbon::parse($launch_time)->addMinutes($journey_minutes);
 
             // Launch log data store in DB
             Rocket::create([
-                'rocket_type' => $request->rocket,
+                'rocket' => $request->rocket,
                 'launch_time' => $launch_time,
                 'estimate_return_time' => $estimate_time,
             ]);

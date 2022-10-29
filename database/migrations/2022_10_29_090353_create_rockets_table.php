@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('rockets', function (Blueprint $table) {
             $table->id();
-            $table->enum('rocket_type', ['a', 'b', 'c']);
+            $table->enum('rocket', ['a', 'b', 'c']);
             $table->dateTime('launch_time');
             $table->dateTime('estimate_return_time');
             $table->timestamps();

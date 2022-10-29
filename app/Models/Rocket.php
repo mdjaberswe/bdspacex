@@ -14,5 +14,5 @@ class Rocket extends Model
      *
      * @var array
      */
-    protected $fillable = ['rocket_type', 'launch_time', 'estimate_return_time'];
+    protected $fillable = ['rocket', 'launch_time', 'estimate_return_time'];
 }
