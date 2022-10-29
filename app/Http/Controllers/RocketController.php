@@ -46,7 +46,11 @@ class RocketController extends Controller
                 'estimate_return_time' => $estimate_time,
             ]);
 
-            return response()->json(['status' => true, 'message' => 'Estimate time of coming back ' . $estimate_time, 'reset' => false]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Estimate time of coming back ' . $estimate_time,
+                'reset' => false,
+            ]);
         }
 
         return response()->json([

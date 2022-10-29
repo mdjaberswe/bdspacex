@@ -5,7 +5,7 @@ namespace App\Library;
 class RocketLaunch
 {
     /**
-     *  Kármán line as space beginning 100 kilometres above Earth
+     *  Karman line as space beginning 100 kilometres above Earth
      */
     const KARMAN_LINE = 100;
 
@@ -95,13 +95,13 @@ class RocketLaunch
     public static function getDownTime($linear_speed)
     {
         // Return journey time in empty space and atmosphere
-        $return_empty_space_time = self::RETURN_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
+        $empty_space_time = self::RETURN_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
 
         // Return journey time in empty space and atmosphere
-        $return_atmosphere_time = ($linear_speed * 1000) / 9.8; // t = u/g
+        $atmosphere_time = ($linear_speed * 1000) / 9.8; // t = u/g
 
         // Total down time
-        $down_time = ($return_atmosphere_time + $return_atmosphere_time) / 60;
+        $down_time = ($empty_space_time + $atmosphere_time) / 60;
 
         return $down_time;
     }
