@@ -23,9 +23,7 @@ label {
 }
 
 label .text-danger {
-    position: absolute;
-    right: 0;
-    top: 10px;
+
 }
 
 input::-webkit-outer-spin-button,
@@ -65,4 +63,9 @@ form .img-thumbnail {
 .thead select,
 .thead input {
     margin-bottom: 5px;
+}
+
+.inline-tr-block {
+    display: inline-block;
+    margin-right: 7px;
 }
