@@ -17,7 +17,7 @@ Route::get('/', function () {
     return view('rocket.launch');
 });
 
-Route::post('rocket-launch', [App\Http\Controllers\RocketController::class, 'launch'])->name('rocket.launch');
+Route::get('rocket-launch', [App\Http\Controllers\RocketController::class, 'launch'])->name('rocket.launch');
 Route::post('rocket-estimate-time', [App\Http\Controllers\RocketController::class, 'estimateTime'])->name('rocket.est');
 
 Auth::routes();
