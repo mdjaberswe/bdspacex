@@ -1,0 +1,9 @@
+<!-- Scripts -->
+{{ HTML::script('https://code.jquery.com/jquery-3.5.1.js') }}
+{{ HTML::script('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js') }}
+{{ HTML::script('https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js') }}
+{{ HTML::script('https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js') }}
+{{ HTML::script('datetimepicker/jquery.datetimepicker.full.min.js') }}
+{{ HTML::script('js/bootstrap.notify.min.js') }}
+{{ HTML::script('js/jquery.validate.min.js') }}
+{{ HTML::script('js/app.js') }}

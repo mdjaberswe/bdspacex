@@ -1,0 +1,68 @@
+.none {
+    display: none;
+}
+
+.plain-txt {
+    text-decoration: none!important;
+    color: rgba(0,0,0,.55)!important;
+}
+
+a.plain-txt:hover {
+    color: rgba(0,0,0,.9)!important;
+}
+
+.form-check.inline-block {
+    display: inline-block;
+    margin-right: 20px;
+    line-height: 23px;
+    padding-top: 10px;
+}
+
+label {
+    position: relative;
+}
+
+label .text-danger {
+    position: absolute;
+    right: 0;
+    top: 10px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+form table {
+    margin-bottom: 5px!important;
+}
+
+.mr-7 {
+    margin-right: 7px;
+}
+
+form .img-thumbnail {
+    max-height: 185px;
+}
+
+.invalid-feedback i {
+    font-style: normal;
+}
+
+.filter .col-md-2,
+.filter .col-md-3,
+.filter .col-md-4,
+.filter .col-md-6 {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.thead select,
+.thead input {
+    margin-bottom: 5px;
+}
