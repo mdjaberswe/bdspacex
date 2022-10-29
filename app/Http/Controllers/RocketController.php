@@ -14,7 +14,7 @@ class RocketController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function launch()
     {
         return view('rocket.launch');
     }
