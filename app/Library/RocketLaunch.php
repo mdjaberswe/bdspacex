@@ -12,7 +12,7 @@ class RocketLaunch
     /**
      * Empty Space Distance between Earth and Space Station in KM
      */
-    const START_EMPTY_SPACE_DISTANCE = 308;
+    const EMPTY_SPACE_DISTANCE = 308;
 
     /**
      * Return Empty Space Distance between Space Station and Earth in KM
@@ -20,9 +20,20 @@ class RocketLaunch
     const RETURN_EMPTY_SPACE_DISTANCE = 380;
 
     /**
-     * Space Station staying hours
+     * Space Station staying minutes
      */
-    const SPACE_STATION_TIME = 6;
+    const SPACE_STATION_TIME = 360;
+
+    /**
+     * Rockets information array (Units: velocity Km/s, accleration Km/s*2)
+     *
+     * @var array
+     */
+    protected $rockets = [
+        'a' => ['atmosphere_speed' => 2.77, 'linear_speed' => 3.56, 'accleration' => 0.05],
+        'b' => ['atmosphere_speed' => 3.8, 'linear_speed' => 3, 'accleration' => 0.05],
+        'c' => ['atmosphere_speed' => 3, 'linear_speed' => 4, 'accleration' => 0.05],
+    ];
 
     /**
      * Get estimated time of coming back three rockets
@@ -32,39 +43,66 @@ class RocketLaunch
      *
      * @return string
      */
-    public static function estimatedTimeToComeBack($launch_time, $rocket_type)
+    public static function getEstimatedTime($launch_time, $rocket_name)
     {
-        $atmosphere_accleration = 50;
+        $rockets = with(new static)->rockets;
 
-        // Atmospheric speed (Km/s)
-        $atmosphere_speed = 0;
-
-        // Linear speed (Km/s) in Empty Space
-        $linear_speed = 0;
-
-        if ($rocket_type == 'a') {
-            $atmosphere_speed = 2.77;
-            $linear_speed = 3.56;
-        } elseif ($rocket_type == 'b') {
-            $atmosphere_speed = 3.8;
-            $linear_speed = 3;
-        } elseif ($rocket_type == 'c') {
-            $atmosphere_speed = 3;
-            $linear_speed = 4;
+        if (! array_key_exists($rocket_name, $rockets)) {
+            return 0;
         }
 
-        // Begin journey time in atmosphere and empty space
-        $start_atmospheric_time = sqrt((2 * self::KARMAN_LINE) / $atmosphere_accleration); // t = sqrt(2s/a)
-        $start_empty_space_time = self::START_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
+        // Rocket journey time from earth to space station
+        $up_time = self::getUpTime($rockets[$rocket_name]['accleration'], $rockets[$rocket_name]['linear_speed']);
 
-        // Return journey time in empty space and atmosphere
-        $return_empty_space_time = self::RETURN_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
-        $return_atmospheric_time = ($linear_speed * 1000) / 9.8; // t = u/g
+        // Rocket journey time from space station to earth
+        $down_time = self::getDownTime($rockets[$rocket_name]['linear_speed']);
 
         // Journey time in Minutes
-        $journey_time = ($start_atmospheric_time + $start_empty_space_time + $return_empty_space_time + $return_atmospheric_time) / 60;
-        $total_time = $journey_time + self::SPACE_STATION_TIME * 60;
+        $total_time = $up_time + self::SPACE_STATION_TIME + $down_time;
 
         return $total_time;
+    }
+
+    /**
+     * Get Rocket journey time from earth to space station
+     *
+     * @param Numeric $accleration (Km/s*2)
+     * @param Numeric $linear_speed (Km/s)
+     *
+     * @return Numeric (Minute)
+     */
+    public static function getUpTime($accleration, $linear_speed)
+    {
+        // Start journey time in atmosphere
+        $atmosphere_time = sqrt((2 * self::KARMAN_LINE) / $accleration); // t = sqrt(2s/a)
+
+        // Start journey time in empty space
+        $empty_space_time = self::EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
+
+        // Total up time
+        $up_time = ($atmosphere_time + $empty_space_time) / 60;
+
+        return $up_time;
+    }
+
+    /**
+     * Get rocket journey time from space station to earth
+     *
+     * @param Numeric $linear_speed (Km/s)
+     *
+     * @return Numeric (Minute)
+     */
+    public static function getDownTime($linear_speed)
+    {
+        // Return journey time in empty space and atmosphere
+        $return_empty_space_time = self::RETURN_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
+
+        // Return journey time in empty space and atmosphere
+        $return_atmosphere_time = ($linear_speed * 1000) / 9.8; // t = u/g
+
+        // Total down time
+        $down_time = ($return_atmosphere_time + $return_atmosphere_time) / 60;
+
+        return $down_time;
     }
 }
