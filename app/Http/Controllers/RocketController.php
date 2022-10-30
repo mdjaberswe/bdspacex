@@ -35,9 +35,11 @@ class RocketController extends Controller
 
         // Update posted data if validation passes.
         if ($validation->passes()) {
-            $launch_time = $this->ampm_to_sql_datetime($request->time);
-            $journey_minutes = RocketLaunch::getEstimatedTime($launch_time, $request->rocket);
-            $estimate_time = \Carbon\Carbon::parse($launch_time)->addMinutes($journey_minutes);
+            // Instantiate a new rocket launch
+            $rocket_launch = new RocketLaunch($request->rocket);
+
+            $launch_time = ampm_to_sql_datetime($request->time);
+            $estimate_time = $rocket_launch->getEstimatedTime($launch_time);
 
             // Launch log data store in DB
             Rocket::create([
@@ -57,23 +59,5 @@ class RocketController extends Controller
             'status' => false,
             'errors' => $validation->getMessageBag()->toArray(),
         ]);
-    }
-
-    /**
-     * AmPm date format to SQL supported DateTime format.
-     *
-     * @param string $ampm
-     *
-     * @return string
-     */
-    private function ampm_to_sql_datetime($ampm)
-    {
-        $divider   = strpos($ampm, ' ');
-        $date      = substr($ampm, 0, $divider);
-        $time      = substr($ampm, $divider + 1);
-        $strtotime = strtotime($time);
-        $sql_time  = date('G:i:s', $strtotime);
-
-        return $date . ' ' . $sql_time;
     }
 }

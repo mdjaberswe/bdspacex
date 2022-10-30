@@ -2,8 +2,15 @@
 
 namespace App\Library;
 
+use Carbon\Carbon;
+
 class RocketLaunch
 {
+    protected $rocket;
+    protected $atmosphere_speed;
+    protected $linear_speed;
+    protected $accleration;
+
     /**
      *  Karman line as space beginning 100 kilometres above Earth
      */
@@ -36,73 +43,103 @@ class RocketLaunch
     ];
 
     /**
-     * Get estimated time of coming back three rockets
+     * Create a new rocket launch instance
      *
-     * @param DateTime $launch_time
-     * @param string $rocket_type a|b|c
+     * @param string $rocket (a|b|c)
      *
-     * @return string
+     * @return void
      */
-    public static function getEstimatedTime($launch_time, $rocket_name)
+    public function __construct($rocket)
     {
-        $rockets = with(new static)->rockets;
-
-        if (! array_key_exists($rocket_name, $rockets)) {
-            return 0;
-        }
-
-        // Rocket journey time from earth to space station
-        $up_time = self::getUpTime($rockets[$rocket_name]['accleration'], $rockets[$rocket_name]['linear_speed']);
-
-        // Rocket journey time from space station to earth
-        $down_time = self::getDownTime($rockets[$rocket_name]['linear_speed']);
-
-        // Journey time in Minutes
-        $total_time = $up_time + self::SPACE_STATION_TIME + $down_time;
-
-        return $total_time;
+        $this->rocket = $rocket;
+        $this->atmosphere_speed = $this->rockets[$rocket]['atmosphere_speed'];
+        $this->linear_speed = $this->rockets[$rocket]['linear_speed'];
+        $this->accleration = $this->rockets[$rocket]['accleration'];
     }
 
     /**
-     * Get Rocket journey time from earth to space station
+     * Get estimated time when rocket will coming back to earth according to launch time
      *
-     * @param Numeric $accleration (Km/s*2)
-     * @param Numeric $linear_speed (Km/s)
+     * @param string $launch_time
      *
-     * @return Numeric (Minute)
+     * @return \Carbon\Carbon
      */
-    public static function getUpTime($accleration, $linear_speed)
+    public function getEstimatedTime($launch_time)
     {
-        // Start journey time in atmosphere
-        $atmosphere_time = sqrt((2 * self::ATMOSPHERE_DISTANCE) / $accleration); // t = sqrt(2s/a)
-
-        // Start journey time in empty space
-        $empty_space_time = self::BEGIN_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
-
-        // Total up time
-        $up_time = ($atmosphere_time + $empty_space_time) / 60;
-
-        return $up_time;
+        return Carbon::parse($launch_time)->addMinutes($this->getJourneyMinutes());
     }
 
     /**
-     * Get rocket journey time from space station to earth
+     * Get total journey time in Minutes
      *
-     * @param Numeric $linear_speed (Km/s)
-     *
-     * @return Numeric (Minute)
+     * @return numeric
      */
-    public static function getDownTime($linear_speed)
+    public function getJourneyMinutes()
     {
-        // Return journey time in empty space and atmosphere
-        $empty_space_time = self::END_EMPTY_SPACE_DISTANCE / $linear_speed; // t = s/u
+        return ($this->getUpTime() + self::SPACE_STATION_TIME + $this->getDownTime());
+    }
 
-        // Return journey time in empty space and atmosphere
-        $atmosphere_time = ($linear_speed * 1000) / 9.8; // t = u/g
+    /**
+     * Get total up time in Minutes
+     *
+     * @return numeric
+     */
+    public function getUpTime()
+    {
+        return ($this->getUpAtmosphereTime() + $this->getUpEmptySpaceTime()) / 60;
+    }
 
-        // Total down time
-        $down_time = ($empty_space_time + $atmosphere_time) / 60;
+    /**
+     * Get atmosphere time (seconds) when rocket is up to space station from earth.
+     * Initial velocity u = 0; s = ut + 1/2 * (a * t * t) => t = sqrt(2s/a)
+     *
+     * @return numeric (unit: seconds)
+     */
+    public function getUpAtmosphereTime()
+    {
+        return sqrt((2 * self::ATMOSPHERE_DISTANCE) / $this->accleration);
+    }
 
-        return $down_time;
+    /**
+     * Get empty space time (seconds) when rocket is up to space station from earth.
+     * In empty space accleration: a = 0; s = s = ut + 1/2 * (a * t * t) => t = s/u
+     *
+     * @return numeric
+     */
+    public function getUpEmptySpaceTime()
+    {
+        return self::BEGIN_EMPTY_SPACE_DISTANCE / $this->linear_speed;
+    }
+
+    /**
+     * Get total down time in Minutes
+     *
+     * @return numeric
+     */
+    public function getDownTime()
+    {
+        return ($this->getDownEmptySpaceTime() + $this->getDownAtmosphereTime()) / 60;
+    }
+
+    /**
+     * Get empty space time (seconds) when rocket is down to earth from space station.
+     * In empty space accleration: a = 0; s = s = ut + 1/2 * (a * t * t) => t = s/u
+     *
+     * @return numeric
+     */
+    public function getDownEmptySpaceTime()
+    {
+        return self::END_EMPTY_SPACE_DISTANCE / $this->linear_speed;
+    }
+
+    /**
+     * Get atmosphere time (seconds) when rocket is down to earth from space station.
+     * Rocket fall into ocean so final velocity v = 0; v^2 = u^2 + 2 * (v-u/t) * s => t = 2s/u
+     *
+     * @return numeric
+     */
+    public function getDownAtmosphereTime()
+    {
+        return (2 * self::ATMOSPHERE_DISTANCE) / $this->linear_speed;
     }
 }
